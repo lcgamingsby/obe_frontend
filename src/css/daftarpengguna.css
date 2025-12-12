@@ -1,0 +1,283 @@
+/* ----- LAYOUT ----- */
+.dashboard-main.sidebar-open {
+  margin-left: 230px;
+  transition: margin-left 0.3s ease;
+}
+
+.dashboard-main.sidebar-closed {
+  margin-left: 70px;
+  transition: margin-left 0.3s ease;
+}
+
+/* ----- CARD WRAPPER ----- */
+.user-table-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 30px auto;
+  width: 95%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-top: 5px solid #2563eb;
+  transition: all 0.3s ease;
+}
+
+/* ----- HEADER ----- */
+.user-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.user-table-header h3 {
+  color: #0f172a;
+  margin: 0;
+}
+
+.user-table-header input {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  width: 230px;
+}
+
+/* ----- TABLE ----- */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  transition: width 0.3s ease;
+}
+
+.user-table th {
+  background-color: #e2e8f0;
+  text-align: left;
+  padding: 10px;
+}
+
+.user-table td {
+  padding: 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.user-table .no-data {
+  text-align: center;
+  padding: 15px;
+  color: #94a3b8;
+}
+
+/* ----- BUTTONS ----- */
+.detail-btn {
+  background-color: #22c55e;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s ease;
+}
+
+.detail-btn:hover {
+  background-color: #16a34a;
+}
+
+/* ----- FOOTER ----- */
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  font-size: 13px;
+  color: #475569;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.prev-btn,
+.next-btn {
+  background-color: #e2e8f0;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.next-btn {
+  background-color: #2563eb;
+  color: white;
+}
+
+.prev-btn:hover {
+  background-color: #cbd5e1;
+}
+
+.next-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Tombol Tambah Akun */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tambah-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tambah-btn:hover {
+  background-color: #1e40af;
+}
+
+/* === Modal Popup === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-card {
+  background-color: #fff;
+  border-radius: 12px;
+  width: 500px;
+  padding: 24px 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-card h2 {
+  margin-bottom: 18px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+  gap: 10px;
+}
+
+.cancel-btn {
+  background-color: #f3f4f6;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.save-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.save-btn:hover {
+  background-color: #1d4ed8;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tambah-btn-green {
+  background-color: #22c55e; /* hijau */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out, transform 0.1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.tambah-btn-green:hover {
+  background-color: #16a34a; /* hijau lebih gelap */
+  transform: scale(1.03);
+}
+
+.tambah-btn-green:active {
+  transform: scale(0.97);
+}
+
+/* Tombol Hapus */
+.delete-btn {
+  background-color: #ef4444; /* Merah */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.delete-btn:hover {
+  background-color: #dc2626;
+  transform: scale(1.03);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}

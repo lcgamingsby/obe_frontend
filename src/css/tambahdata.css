@@ -1,0 +1,160 @@
+/* Latar belakang semi transparan untuk modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(30, 30, 30, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Kotak utama modal */
+.modal-container {
+  background: #fff;
+  border-radius: 10px;
+  width: 420px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: popIn 0.3s ease;
+}
+
+/* Header modal */
+.modal-header {
+  color: black;
+  padding: 16px 16px 1px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.close-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Isi modal */
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Setiap kelompok input */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+}
+
+/* Footer modal */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #e5e5e5;
+}
+
+/* Tombol-tombol aksi */
+.btn-save {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn-save:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-cancel {
+  background-color: #f3f4f6;
+  border: none;
+  color: #333;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #eaeffa;
+  transform: translateY(-1px);
+}
+
+/* Animasi masuk modal */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsif di layar kecil */
+@media (max-width: 480px) {
+  .modal-container {
+    width: 90%;
+  }
+}
