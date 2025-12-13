@@ -20,11 +20,35 @@ export default function DataMaster() {
   const [dataProdi, setDataProdi] = useState([]);
   const [dataDosen, setDataDosen] = useState([]);
   const [dataKaprodi, setDataKaprodi] = useState([]);
+  const [search, setSearch] = useState("");
+
+
+  const filterData = (data) => {
+    if (!search) return data;
+
+    return data.filter((item) =>
+      Object.values(item).some(
+        (val) =>
+          val &&
+          val.toString().toLowerCase().includes(search.toLowerCase())
+      )
+    );
+  };
+  const filteredKaprodi = filterData(dataKaprodi);
+  const filteredProdi = filterData(dataProdi);
+  const filteredDosen = filterData(dataDosen);
+  const filteredFakultas = filterData(dataFakultas);
 
   const handleAddData = async () => {
     setShowModal(false);
     fetchData();
   };
+  
+  useEffect(() => {
+    fetchData();
+    setSearch("");
+  }, [activeTab]);
+
 
   useEffect(() => {
     fetchData();
@@ -104,8 +128,10 @@ export default function DataMaster() {
           <DataTable
             title="Data Fakultas"
             headers={["ID", "Fakultas", "Universitas", "Action"]}
-            rows={dataFakultas.map((d) => [d.id, d.fakultas, d.universitas])}
-            searchPlaceholder="Cari fakultas..."
+            rows={filteredFakultas.map((d) => [d.id, d.fakultas, d.universitas])}
+            searchPlaceholder="Cari Fakultas..."
+            searchValue={search}
+            onSearch={setSearch}
             onAdd={() => setShowModal(true)}
             onDelete={handleDelete}
           />
@@ -116,13 +142,15 @@ export default function DataMaster() {
           <DataTable
             title="Data Program Studi"
             headers={["ID", "Prodi", "Fakultas", "Universitas", "Action"]}
-            rows={dataProdi.map((d) => [
+            rows={filteredProdi.map((d) => [
               d.id,
               d.prodi,
               d.fakultas,
               d.universitas,
             ])}
             searchPlaceholder="Cari prodi..."
+            searchValue={search}
+            onSearch={setSearch}
             onAdd={() => setShowModal(true)}
             onDelete={handleDelete}
           />
@@ -139,13 +167,15 @@ export default function DataMaster() {
               "Email",
               "Action",
             ]}
-            rows={dataDosen.map((d) => [
+            rows={filteredDosen.map((d) => [
               d.nip,
               d.nama,
               d.nidn,
               d.email,
             ])}
             searchPlaceholder="Cari dosen..."
+            searchValue={search}
+            onSearch={setSearch}
             onAdd={() => setShowModal(true)}
             onDelete={handleDelete}
           />
@@ -153,6 +183,7 @@ export default function DataMaster() {
 
       case "kaprodi":
         return (
+          
           <DataTable
             title="Data Kaprodi"
             headers={[
@@ -163,14 +194,16 @@ export default function DataMaster() {
               "NIP",
               "Action",
             ]}
-            rows={dataKaprodi.map((d) => [
+            rows={filteredKaprodi.map((d) => [
               d.fakultas,
               d.prodi,
               d.tahun,
               d.nama_kaprodi,
-              d.nip,
+              d.nip_nik,
             ])}
             searchPlaceholder="Cari kaprodi..."
+            searchValue={search}
+            onSearch={setSearch}
             onAdd={() => setShowModal(true)}
             onDelete={handleDelete}
           />
@@ -235,13 +268,26 @@ export default function DataMaster() {
 
 
 // TABEL
-function DataTable({ title, headers, rows, searchPlaceholder, onAdd, onDelete }) {
+function DataTable({ title,
+  headers,
+  rows,
+  searchPlaceholder,
+  searchValue,
+  onSearch,
+  onAdd,
+  onDelete, }) {
   return (
     <>
       <div className="table-header">
         <h3>{title}</h3>
         <div className="table-controls">
-          <input type="text" placeholder={searchPlaceholder} />
+          <input
+            type="text"
+            placeholder={searchPlaceholder}
+            value={searchValue}
+            onChange={(e) => onSearch(e.target.value)}
+          />
+
           <button className="add-btn" onClick={onAdd}>Tambah</button>
         </div>
       </div>
