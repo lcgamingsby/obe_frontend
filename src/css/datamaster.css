@@ -197,3 +197,24 @@
   margin-left: 70px;
   width: calc(100% - 70px);
 }
+
+.alert-danger {
+  background-color: #dc3545;
+  color: #fff;
+  padding: 5px 15px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  margin-right: 35px;
+  margin-left: 35px;
+}
+
+.alert-danger strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.alert-danger p {
+  margin: 0;
+  font-size: 0.9rem;
+}

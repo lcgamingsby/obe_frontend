@@ -1,0 +1,189 @@
+/* ===============================
+   INFO BAR (STATUS PRODI AKTIF)
+================================ */
+.info-bar {
+  background: linear-gradient(90deg, #0891b2, #06b6d4);
+  color: #ecfeff;
+  padding: 14px 20px;
+  border-radius: 8px;
+  margin-bottom: 22px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+
+/* ===============================
+   TAB NAV (PL, CPL, DLL)
+================================ */
+.tab-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #475569;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: #2563eb;
+}
+
+.tab-btn.active {
+  border-bottom: 3px solid #2563eb;
+  color: #2563eb;
+}
+
+
+/* ===============================
+   TABLE HEADER (SEARCH & BUTTON)
+================================ */
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.table-header h3 {
+  color: #0f172a;
+}
+
+.table-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.table-controls input {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  width: 220px;
+}
+
+
+/* ===============================
+   BUTTONS (ADD / IMPORT / DL)
+================================ */
+.add-btn {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.import-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.download-btn {
+  background: #0ea5e9;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.add-btn:hover,
+.import-btn:hover,
+.download-btn:hover {
+  opacity: 0.9;
+}
+
+
+/* ===============================
+   TABLE
+================================ */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data-table th {
+  background: #e2e8f0;
+  text-align: left;
+  padding: 10px;
+  font-weight: 600;
+}
+
+.data-table td {
+  padding: 9px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.data-table tr:hover {
+  background: #f8fafc;
+}
+
+.no-data {
+  text-align: center;
+  padding: 15px;
+  color: #94a3b8;
+}
+
+
+/* ===============================
+   ACTION BUTTONS
+================================ */
+.edit-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.delete-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-btn:hover,
+.delete-btn:hover {
+  opacity: 0.9;
+}
+
+
+/* ===============================
+   RESPONSIVE (SMALL SCREEN)
+================================ */
+@media (max-width: 768px) {
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .table-controls input {
+    width: 100%;
+  }
+}

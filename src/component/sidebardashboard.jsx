@@ -16,7 +16,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       submenus: [
         { name: "Data Master", path: "/dashboard/datamaster" },
         { name: "Pengguna", path: "/dashboard/pengguna" },
-        //{ name: "Prodi Aktif", path: "/dashboard/settings/prodi" },
+        { name: "Prodi Aktif", path: "/dashboard/setproditahunaktif" },
       ],
     },
     {
