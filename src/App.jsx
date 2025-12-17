@@ -4,7 +4,7 @@ import Dashboard from "./pages/dashboard";
 import DaftarPengguna from "./pages/daftarpengguna";
 import DataMaster from "./pages/DataMaster";
 import Data from "./pages/kurikulumdata";
-//
+import RegisterPage from "./pages/registerpage";
 import SetProdiTahunAktif from "./pages/setproditahunaktif";
 
 function App() {
@@ -21,6 +21,8 @@ function App() {
         <Route path="/dashboard/datamaster" element={<DataMaster />} />
         <Route path="/dashboard/setproditahunaktif" element={<SetProdiTahunAktif />}/>
         <Route path="/dashboard/kurikulum/data" element={<Data />} />
+        <Route path="/register" element={<RegisterPage />} />
+
         
 
       </Routes>

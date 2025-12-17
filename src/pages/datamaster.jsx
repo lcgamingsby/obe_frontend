@@ -3,10 +3,7 @@ import { config } from "../data/config";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../component/sidebardashboard";
-import TambahFakultasModal from "./tambahdatafakultas";
-import TambahProdiModal from "./tambahdataprodi";
-import TambahDosenModal from "./tambahdatadosen";
-import TambahDataKaprodi from "./tambahdatakaprodi";
+import DataMasterModal from "../component/tambahdatamaster";
 import "../css/datamaster.css";
 import "../css/sidebar.css";
 
@@ -15,7 +12,8 @@ export default function DataMaster() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("fakultas");
   const [showModal, setShowModal] = useState(false);
-
+  const [modalMode, setModalMode] = useState("tambah"); // tambah | edit
+  const [selectedData, setSelectedData] = useState([]);
   const [dataFakultas, setDataFakultas] = useState([]);
   const [dataProdi, setDataProdi] = useState([]);
   const [dataDosen, setDataDosen] = useState([]);
@@ -41,6 +39,7 @@ export default function DataMaster() {
 
   const handleAddData = async () => {
     setShowModal(false);
+    setSelectedData(null);
     fetchData();
   };
   
@@ -79,34 +78,35 @@ export default function DataMaster() {
     }
   };
 
-  const handleDelete = async (index) => {
+  const handleDelete = async (row) => {
     if (!window.confirm("Yakin ingin menghapus data ini?")) return;
 
     try {
       let endpoint = "";
-      let id = "";
+      let key = "";
 
       if (activeTab === "fakultas") {
-        id = dataFakultas[index].id;
         endpoint = "/fakultas";
+        key = row.id;
       }
-
       if (activeTab === "prodi") {
-        id = dataProdi[index].id;
         endpoint = "/prodi";
+        key = row.id;
       }
-
       if (activeTab === "dosen") {
-        id = dataDosen[index].id;
         endpoint = "/dosen";
+        key = row.nip;
       }
-
       if (activeTab === "kaprodi") {
-        id = dataKaprodi[index].id;
         endpoint = "/kaprodi";
+        key = row.nip_nik;
       }
+      //console.log("ROW KAPRODI:", row);
+      //console.log("DELETE KAPRODI ID:", row.id);
+      //console.log("DELETE KAPRODI NIP:", row.nip_nik);
 
-      await axios.delete(`${config.BACKEND_URL}${endpoint}/${id}`, {
+
+      await axios.delete(`${config.BACKEND_URL}${endpoint}/${key}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -114,12 +114,12 @@ export default function DataMaster() {
 
       alert("Data berhasil dihapus!");
       fetchData();
-
     } catch (err) {
-      console.error("Gagal menghapus:", err);
+      console.error(err);
       alert("Gagal menghapus data");
     }
   };
+
 
   const renderTable = () => {
     switch (activeTab) {
@@ -128,13 +128,26 @@ export default function DataMaster() {
           <DataTable
             title="Data Fakultas"
             headers={["ID", "Fakultas", "Universitas", "Action"]}
-            rows={filteredFakultas.map((d) => [d.id, d.fakultas, d.universitas])}
+            rows={filteredFakultas.map((d) => ({
+              view: [d.id, d.fakultas, d.universitas],
+              raw: d,
+            }))}
             searchPlaceholder="Cari Fakultas..."
             searchValue={search}
             onSearch={setSearch}
-            onAdd={() => setShowModal(true)}
-            onDelete={handleDelete}
+            onAdd={() => {
+              setModalMode("tambah");
+              setSelectedData(null);
+              setShowModal(true);
+            }}
+            onEdit={(row) => {
+              setModalMode("edit");
+              setSelectedData(row);
+              setShowModal(true);
+            }}
+            onDelete={(row) => handleDelete(row)}
           />
+
         );
 
       case "prodi":
@@ -142,17 +155,24 @@ export default function DataMaster() {
           <DataTable
             title="Data Program Studi"
             headers={["ID", "Prodi", "Fakultas", "Universitas", "Action"]}
-            rows={filteredProdi.map((d) => [
-              d.id,
-              d.prodi,
-              d.fakultas,
-              d.universitas,
-            ])}
+            rows={filteredProdi.map((d) => ({
+              view: [d.id, d.prodi, d.fakultas, d.universitas],
+              raw: d,
+            }))}
             searchPlaceholder="Cari prodi..."
             searchValue={search}
             onSearch={setSearch}
-            onAdd={() => setShowModal(true)}
-            onDelete={handleDelete}
+            onAdd={() => {
+              setModalMode("tambah");
+              setSelectedData(null);
+              setShowModal(true);
+            }}
+            onEdit={(row) => {
+              setModalMode("edit");
+              setSelectedData(row);
+              setShowModal(true);
+            }}
+            onDelete={(row) => handleDelete(row)}
           />
         );
 
@@ -165,19 +185,34 @@ export default function DataMaster() {
               "Nama Dosen",
               "NIDN",
               "Email",
+              "Prodi",
               "Action",
             ]}
-            rows={filteredDosen.map((d) => [
-              d.nip,
-              d.nama,
-              d.nidn,
-              d.email,
-            ])}
+            rows={filteredDosen.map((d) => ({
+              view: [
+                d.nip,
+                d.nama,
+                d.nidn,
+                d.email,
+                d.prodi,
+              ],
+              raw: d,
+            }))}
+
             searchPlaceholder="Cari dosen..."
             searchValue={search}
             onSearch={setSearch}
-            onAdd={() => setShowModal(true)}
-            onDelete={handleDelete}
+            onAdd={() => {
+              setModalMode("tambah");
+              setSelectedData(null);
+              setShowModal(true);
+            }}
+            onEdit={(row) => {
+              setModalMode("edit");
+              setSelectedData(row);
+              setShowModal(true);
+            }}
+            onDelete={(row) => handleDelete(row)}
           />
         );
 
@@ -194,18 +229,31 @@ export default function DataMaster() {
               "NIP",
               "Action",
             ]}
-            rows={filteredKaprodi.map((d) => [
-              d.fakultas,
-              d.prodi,
-              d.tahun,
-              d.nama_kaprodi,
-              d.nip_nik,
-            ])}
+            rows={filteredKaprodi.map((d) => ({
+              view: [
+                d.fakultas,
+                d.prodi,
+                d.tahun,
+                d.nama_kaprodi,
+                d.nip_nik,
+              ],
+              raw: d,
+            }))}
+
             searchPlaceholder="Cari kaprodi..."
             searchValue={search}
             onSearch={setSearch}
-            onAdd={() => setShowModal(true)}
-            onDelete={handleDelete}
+            onAdd={() => {
+              setModalMode("tambah");
+              setSelectedData(null);
+              setShowModal(true);
+            }}
+            onEdit={(row) => {
+              setModalMode("edit");
+              setSelectedData(row);
+              setShowModal(true);
+            }}
+            onDelete={(row) => handleDelete(row)}
           />
         );
 
@@ -247,20 +295,13 @@ export default function DataMaster() {
       </main>
 
       {showModal && (
-        <>
-          {activeTab === "fakultas" && (
-            <TambahFakultasModal onClose={() => setShowModal(false)} onSuccess={handleAddData} />
-          )}
-          {activeTab === "prodi" && (
-            <TambahProdiModal onClose={() => setShowModal(false)} onSuccess={handleAddData} />
-          )}
-          {activeTab === "dosen" && (
-            <TambahDosenModal onClose={() => setShowModal(false)} onSuccess={handleAddData} />
-          )}
-          {activeTab === "kaprodi" && (
-            <TambahDataKaprodi onClose={() => setShowModal(false)} onSuccess={handleAddData} />
-          )}
-        </>
+        <DataMasterModal
+          entity={activeTab}        // fakultas | prodi | dosen | kaprodi
+          mode={modalMode}          // tambah | edit
+          initialData={selectedData}
+          onClose={() => setShowModal(false)}
+          onSuccess={handleAddData}
+        />
       )}
     </div>
   );
@@ -275,6 +316,7 @@ function DataTable({ title,
   searchValue,
   onSearch,
   onAdd,
+  onEdit,
   onDelete, }) {
   return (
     <>
@@ -300,12 +342,16 @@ function DataTable({ title,
           {rows.length === 0 ? (
             <tr><td colSpan={headers.length} className="no-data">Tidak ada data</td></tr>
           ) : (
-            rows.map((cols, i) => (
+            rows.map((row, i) => (
               <tr key={i}>
-                {cols.map((v, j) => <td key={j}>{v}</td>)}
+                {row.view.map((v, j) => <td key={j}>{v}</td>)}
                 <td>
-                  <button className="edit-btn">EDIT</button>
-                  <button className="delete-btn" onClick={() => onDelete(i)}>DELETE</button>
+                  <button className="edit-btn" onClick={() => onEdit(row.raw)}>
+                    EDIT
+                  </button>
+                  <button className="delete-btn" onClick={() => onDelete(row.raw)}>
+                    DELETE
+                  </button>
                 </td>
               </tr>
             ))

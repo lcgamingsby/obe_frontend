@@ -11,27 +11,20 @@ export default function KurikulumData() {
   const [activeTab, setActiveTab] = useState("pl");
   const [search, setSearch] = useState("");
 
-  const [dataPL, setDataPL] = useState([]);
-  const [dataCPL, setDataCPL] = useState([]);
-  const [dataIndikator, setDataIndikator] = useState([]);
-  const [dataBK, setDataBK] = useState([]);
-  const [dataMK, setDataMK] = useState([]);
-
+  const [data, setData] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState("tambah");
+  const [modalMode, setModalMode] = useState("tambah"); // tambah | edit | import
+  const [selectedData, setSelectedData] = useState(null);
 
   /* ======================
-     FILTER
+     ENDPOINT MAP
   ====================== */
-  const filterData = (data) => {
-    if (!search) return data;
-    return data.filter((item) =>
-      Object.values(item).some(
-        (val) =>
-          val &&
-          val.toString().toLowerCase().includes(search.toLowerCase())
-      )
-    );
+  const endpointMap = {
+    pl: "/pl",
+    cpl: "/cpl",
+    indikator: "/indikator-cpl",
+    bk: "/bahan-kajian",
+    mk: "/mata-kuliah",
   };
 
   /* ======================
@@ -44,91 +37,110 @@ export default function KurikulumData() {
 
   const fetchData = async () => {
     try {
-      let endpoint = "";
+      const res = await axios.get(
+        `${config.BACKEND_URL}${endpointMap[activeTab]}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-      if (activeTab === "pl") endpoint = "/pl";
-      if (activeTab === "cpl") endpoint = "/cpl";
-      if (activeTab === "indikator") endpoint = "/indikator-cpl";
-      if (activeTab === "bk") endpoint = "/bahan-kajian";
-      if (activeTab === "mk") endpoint = "/mata-kuliah";
+      setData(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Gagal fetch data kurikulum:", err);
+      setData([]);
+    }
+  };
 
-      const res = await axios.get(`${config.BACKEND_URL}${endpoint}`, {
+  /* ======================
+     FILTER
+  ====================== */
+  const filteredData = data.filter((item) =>
+    Object.values(item).some(
+      (val) =>
+        val &&
+        val.toString().toLowerCase().includes(search.toLowerCase())
+    )
+  );
+
+  /* ======================
+     DELETE
+  ====================== */
+  const handleDelete = async (row) => {
+    if (!window.confirm("Yakin ingin menghapus data ini?")) return;
+
+    try {
+      let url = "";
+
+      switch (activeTab) {
+        case "pl":
+          url = `/pl/${row.kode_pl}`;
+          break;
+
+        case "cpl":
+          url = `/cpl/${row.kode_cpl}`;
+          break;
+
+        case "indikator":
+          url = `/indikator-cpl/${row.kode_indikator}`;
+          break;
+
+        case "bk":
+          url = `/bahan-kajian/${row.kode_bk}`;
+          break;
+
+        case "mk":
+          url = `/mata-kuliah/${row.kode_mk}`;
+          break;
+
+        default:
+          return;
+      }
+
+      await axios.delete(`${config.BACKEND_URL}${url}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
-      if (activeTab === "pl") setDataPL(res.data || []);
-      if (activeTab === "cpl") setDataCPL(res.data || []);
-      if (activeTab === "indikator") setDataIndikator(res.data || []);
-      if (activeTab === "bk") setDataBK(res.data || []);
-      if (activeTab === "mk") setDataMK(res.data || []);
+      fetchData();
     } catch (err) {
-      console.error("Gagal fetch data kurikulum:", err);
+      console.error(err);
+      alert("Gagal menghapus data");
     }
   };
+
 
   /* ======================
      DOWNLOAD TEMPLATE
   ====================== */
   const downloadTemplate = (type) => {
-    let headers = [];
-    let filename = "";
+    const templates = {
+      pl: ["Kode_Profil", "Deskripsi_Profil"],
+      cpl: ["Kode_CPL", "Deskripsi_CPL"],
+      indikator: [
+        "Kode_CPL_Indikator",
+        "Deskripsi_CPL_Indikator",
+        "Bobot(%)",
+        "Kode_CPL",
+      ],
+      bk: ["Kode_BK", "Bahan_Kajian", "Deskripsi_BK"],
+      mk: ["Kode_MK", "Nama_MK", "Deskripsi_MK", "Jenis_MK"],
+    };
 
-    switch (type) {
-        case "pl":
-        headers = ["Kode_Profil", "Deskripsi_Profil"];
-        filename = "template_pl.csv";
-        break;
-
-        case "cpl":
-        headers = ["Kode_CPL", "Deskripsi_CPL"];
-        filename = "template_cpl.csv";
-        break;
-
-        case "indikator":
-        headers = [
-            "Kode_CPL_Indikator",
-            "Deskripsi_CPL_Indikator",
-            "Bobot(%)",
-            "Kode_CPL",
-        ];
-        filename = "template_indikator_cpl.csv";
-        break;
-
-        case "bk":
-        headers = ["Kode_BK", "Nama_BK", "Deskripsi_BK"];
-        filename = "template_bahan_kajian.csv";
-        break;
-
-        case "mk":
-        headers = ["Kode_MK", "Nama_MK", "Deskripsi_MK", "Jenis_MK"];
-        filename = "template_mata_kuliah.csv";
-        break;
-
-        default:
-        return;
-    }
-
-    // 🔑 PENTING: join dengan koma
-    const csvContent = headers.map(h => `"${h}"`).join(";") + "\n";
-
-    
-
+    const csvContent = templates[type].join(";") + "\n";
     const blob = new Blob([csvContent], {
-        type: "text/csv;charset=utf-8;",
+      type: "text/csv;charset=utf-8;",
     });
 
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-
     link.href = url;
-    link.download = filename;
+    link.download = `template_${type}.csv`;
     link.click();
-
     URL.revokeObjectURL(url);
-    };
-
+  };
 
   /* ======================
      RENDER TABLE
@@ -139,6 +151,7 @@ export default function KurikulumData() {
       setSearch,
       onAdd: (mode) => {
         setModalMode(mode);
+        setSelectedData(null);
         setShowModal(true);
       },
       onDownload: () => downloadTemplate(activeTab),
@@ -150,11 +163,16 @@ export default function KurikulumData() {
           <DataTable
             title="Profil Lulusan (PL)"
             headers={["Kode PL", "Deskripsi", "Prodi", "Action"]}
-            rows={filterData(dataPL).map((d) => [
-              d.kode_pl,
-              d.deskripsi,
-              d.prodi,
-            ])}
+            rows={filteredData.map((d) => ({
+              view: [d.kode_pl, d.deskripsi, d.prodi],
+              raw: d,
+            }))}
+            onEdit={(row) => {
+              setSelectedData(row);
+              setModalMode("edit");
+              setShowModal(true);
+            }}
+            onDelete={handleDelete}
             {...tableProps}
           />
         );
@@ -164,11 +182,16 @@ export default function KurikulumData() {
           <DataTable
             title="CPL Prodi"
             headers={["Kode CPL", "Deskripsi", "Prodi", "Action"]}
-            rows={filterData(dataCPL).map((d) => [
-              d.kode_cpl,
-              d.deskripsi,
-              d.prodi,
-            ])}
+            rows={filteredData.map((d) => ({
+              view: [d.kode_cpl, d.deskripsi, d.prodi],
+              raw: d,
+            }))}
+            onEdit={(row) => {
+              setSelectedData(row);
+              setModalMode("edit");
+              setShowModal(true);
+            }}
+            onDelete={handleDelete}
             {...tableProps}
           />
         );
@@ -178,11 +201,25 @@ export default function KurikulumData() {
           <DataTable
             title="Indikator CPL"
             headers={["CPL", "Indikator", "Bobot", "Action"]}
-            rows={filterData(dataIndikator).map((d) => [
-              d.kode_cpl,
-              d.indikator,
-              d.bobot,
-            ])}
+            rows={filteredData.map((d) => ({
+              id: d.id,
+              view: [
+                  <>
+                    <strong>{d.kode_cpl}</strong>.{d.deskripsi_cpl}
+                  </>,
+                  <>
+                    <strong>{d.kode_indikator}</strong>.{d.deskripsi}
+                  </>,
+                d.bobot,
+              ],
+              raw: d,
+            }))}
+            onEdit={(row) => {
+              setSelectedData(row);
+              setModalMode("edit");
+              setShowModal(true);
+            }}
+            onDelete={handleDelete}
             {...tableProps}
           />
         );
@@ -192,12 +229,16 @@ export default function KurikulumData() {
           <DataTable
             title="Bahan Kajian (BK)"
             headers={["Kode", "Bahan Kajian", "Deskripsi", "Prodi", "Action"]}
-            rows={filterData(dataBK).map((d) => [
-              d.kode_bk,
-              d.bahan_kajian,
-              d.deskripsi,
-              d.prodi,
-            ])}
+            rows={filteredData.map((d) => ({
+              view: [d.kode_bk, d.bahan_kajian, d.deskripsi, d.prodi],
+              raw: d,
+            }))}
+            onEdit={(row) => {
+              setSelectedData(row);
+              setModalMode("edit");
+              setShowModal(true);
+            }}
+            onDelete={handleDelete}
             {...tableProps}
           />
         );
@@ -207,11 +248,16 @@ export default function KurikulumData() {
           <DataTable
             title="Mata Kuliah (MK)"
             headers={["Kode", "Mata Kuliah", "Deskripsi", "Action"]}
-            rows={filterData(dataMK).map((d) => [
-              d.kode_mk,
-              d.nama_mk,
-              d.deskripsi,
-            ])}
+            rows={filteredData.map((d) => ({
+              view: [d.kode_mk, d.nama_mk, d.deskripsi],
+              raw: d,
+            }))}
+            onEdit={(row) => {
+              setSelectedData(row);
+              setModalMode("edit");
+              setShowModal(true);
+            }}
+            onDelete={handleDelete}
             {...tableProps}
           />
         );
@@ -223,10 +269,7 @@ export default function KurikulumData() {
 
   return (
     <div className="dashboard">
-      <Sidebar
-        isOpen={sidebarOpen}
-        toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-      />
+      <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
       <header className={`dashboard-header ${sidebarOpen ? "open" : "closed"}`}>
         <div>
@@ -235,11 +278,7 @@ export default function KurikulumData() {
         </div>
       </header>
 
-      <main
-        className={`dashboard-main ${
-          sidebarOpen ? "sidebar-open" : "sidebar-closed"
-        }`}
-      >
+      <main className={`dashboard-main ${sidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
         <div className="data-master-card">
           <div className="tab-nav">
             {["pl", "cpl", "indikator", "bk", "mk"].map((tab) => (
@@ -261,6 +300,7 @@ export default function KurikulumData() {
         <ModalKurikulum
           type={activeTab}
           mode={modalMode}
+          initialData={selectedData}
           onClose={() => setShowModal(false)}
           onSuccess={fetchData}
         />
@@ -280,6 +320,8 @@ function DataTable({
   setSearch,
   onAdd,
   onDownload,
+  onEdit,
+  onDelete,
 }) {
   return (
     <>
@@ -322,14 +364,18 @@ function DataTable({
               </td>
             </tr>
           ) : (
-            rows.map((cols, i) => (
+            rows.map((row, i) => (
               <tr key={i}>
-                {cols.map((v, j) => (
+                {row.view.map((v, j) => (
                   <td key={j}>{v}</td>
                 ))}
                 <td>
-                  <button className="edit-btn">EDIT</button>
-                  <button className="delete-btn">DELETE</button>
+                  <button className="edit-btn" onClick={() => onEdit(row.raw)}>
+                    EDIT
+                  </button>
+                  <button className="delete-btn" onClick={() => onDelete(row.raw)}>
+                    DELETE
+                  </button>
                 </td>
               </tr>
             ))

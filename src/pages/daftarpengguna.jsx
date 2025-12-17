@@ -18,7 +18,6 @@ export default function DaftarPengguna() {
     email: "",
     nama: "",
     hakAkses: "",
-    prodi: "",
     status: "Aktif",
     password: "",
   });
@@ -33,12 +32,18 @@ export default function DaftarPengguna() {
       const res = await fetch(`${config.BACKEND_URL}/users`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
+
       const data = await res.json();
-      setUsers(data);
+
+      // 🔒 PROTEKSI
+      setUsers(Array.isArray(data) ? data : []);
+
     } catch (err) {
       console.error("Gagal memuat pengguna:", err);
+      setUsers([]); // fallback
     }
   };
+
 
   useEffect(() => {
     fetchUsers();
@@ -61,7 +66,6 @@ export default function DaftarPengguna() {
       email: "",
       nama: "",
       hakAkses: "",
-      prodi: "",
       status: "Aktif",
       password: "",
     });
@@ -78,7 +82,6 @@ export default function DaftarPengguna() {
       email: user.email,
       nama: user.nama,
       hakAkses: user.hakAkses,
-      prodi: user.prodi,
       status: user.status,
       password: "", // password kosong, user isi kalau mau ganti
     });
@@ -192,9 +195,9 @@ export default function DaftarPengguna() {
 
             <div className="header-actions">
               <input type="text" placeholder="Cari pengguna..." />
-              <button className="tambah-btn-green" onClick={openAddModal}>
+              {/*<button className="tambah-btn-green" onClick={openAddModal}>
                 + Tambah
-              </button>
+              </button>*/}
             </div>
           </div>
 
@@ -205,16 +208,15 @@ export default function DaftarPengguna() {
                   <th>Email</th>
                   <th>Nama Lengkap</th>
                   <th>Hak Akses</th>
-                  <th>Prodi</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
 
               <tbody>
-                {users.length === 0 ? (
+                {!users || users.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="no-data">
+                    <td colSpan="5" className="no-data">
                       Tidak ada data pengguna
                     </td>
                   </tr>
@@ -224,18 +226,12 @@ export default function DaftarPengguna() {
                       <td>{u.email}</td>
                       <td>{u.nama}</td>
                       <td>{u.hakAkses}</td>
-                      <td>{u.prodi}</td>
                       <td>{u.status}</td>
-
                       <td className="action-buttons">
                         <button className="detail-btn" onClick={() => openEditModal(u)}>
                           Edit
                         </button>
-
-                        <button
-                          className="delete-btn"
-                          onClick={() => handleDelete(u.id)}
-                        >
+                        <button className="delete-btn" onClick={() => handleDelete(u.id)}>
                           Hapus
                         </button>
                       </td>
@@ -259,7 +255,7 @@ export default function DaftarPengguna() {
       </main>
 
       {/* MODAL FORM */}
-      {showModal && (
+      {showModal && isEdit && (
         <div className="modal-overlay">
           <div className="modal-card">
             <h2>{isEdit ? "Edit Pengguna" : "Tambah Pengguna"}</h2>
@@ -283,15 +279,10 @@ export default function DaftarPengguna() {
                 <select name="hakAkses" value={formData.hakAkses} onChange={handleChange} required>
                   <option value="">-- Pilih Hak Akses --</option>
                   <option value="Admin">Admin</option>
-                  <option value="Prodi">Prodi</option>
-                  <option value="Fakultas">Fakultas</option>
+                  <option value="Admin">Dosen</option>
+                  <option value="Fakultas">Operator Fakultas</option>
+                  <option value="Prodi">Operator Prodi</option>
                 </select>
-              </div>
-
-              <div className="form-group">
-                <label>Program Studi</label>
-                <input type="text" name="prodi"
-                  value={formData.prodi} onChange={handleChange} />
               </div>
 
               <div className="form-group">

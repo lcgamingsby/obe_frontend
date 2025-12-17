@@ -112,6 +112,12 @@ export default function LoginPage() {
             <button type="submit" disabled={loading} className="btn-primary">
               {loading ? "Memproses..." : "Masuk"}
             </button>
+            <p className="register-link">
+              Belum punya akun?{" "}
+              <span onClick={() => navigate("/register")}>
+                Daftar di sini
+              </span>
+            </p>
           </form>
         </div>
       </div>

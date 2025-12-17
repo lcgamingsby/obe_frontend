@@ -214,3 +214,20 @@ a {
   font-weight: 500;
   text-decoration: none;
 }
+
+.register-link {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 14px;
+  color: #475569;
+}
+
+.register-link span {
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.register-link span:hover {
+  text-decoration: underline;
+}
